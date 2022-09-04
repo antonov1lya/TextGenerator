@@ -1,6 +1,5 @@
 import random
 import re
-from random import choice
 
 
 class TextGenerator:
@@ -34,11 +33,11 @@ class TextGenerator:
         if seed is not None:
             random.seed(seed)
         if prefix is None:
-            prefix = choice(list(self.n_grams.keys()))
+            prefix = random.choice(list(self.n_grams.keys()))
         else:
             prefix = tuple(prefix[-self.n:])
         for i in range(length):
-            word = choice(self.n_grams[prefix])
+            word = random.choice(self.n_grams[prefix])
             prefix = prefix[1:] + (word,)
             print(word, end=' ')
         print()
