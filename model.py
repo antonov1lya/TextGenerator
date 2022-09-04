@@ -4,10 +4,10 @@ from random import choice
 
 
 class TextGenerator:
-    def __init__(self, n=2):
+    def __init__(self):
         self.n_grams = {}
         self.first_n_words = []
-        self.n = n
+        self.n = 3
 
     def __n_grams_creator(self, words: list[str]) -> None:
         for i in range(self.n, len(words)):
@@ -15,7 +15,7 @@ class TextGenerator:
                 self.n_grams[tuple(words[i - j] for j in range(self.n, 0, -1))] = []
             self.n_grams[tuple(words[i - j] for j in range(self.n, 0, -1))].append(words[i])
 
-    def __line_handler(self, string: str, last_n_words=[]) -> list[str]:
+    def __line_handler(self, string: str, last_n_words: list[str]) -> list[str]:
         words = last_n_words + re.compile('[^а-яА-Я ]').sub(' ', string).lower().split()
         if not len(self.first_n_words) and len(words) > self.n:
             self.first_n_words = [words[j] for j in range(self.n)]
@@ -35,6 +35,8 @@ class TextGenerator:
             random.seed(seed)
         if prefix is None:
             prefix = choice(list(self.n_grams.keys()))
+        else:
+            prefix = tuple(prefix[-self.n:])
         for i in range(length):
             word = choice(self.n_grams[prefix])
             prefix = prefix[1:] + (word,)
