@@ -4,10 +4,10 @@ from random import choice
 
 
 class TextGenerator:
-    def __init__(self):
+    def __init__(self, n=3):
         self.n_grams = {}
         self.first_n_words = []
-        self.n = 3
+        self.n = n
 
     def __n_grams_creator(self, words: list[str]) -> None:
         for i in range(self.n, len(words)):
