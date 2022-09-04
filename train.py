@@ -3,8 +3,8 @@ import argparse
 import pickle
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--input-dir', default=None)
-parser.add_argument('--model', default='model.pkl')
+parser.add_argument('--input-dir', default=None, type=str)
+parser.add_argument('--model', default='model.pkl', type=str)
 arguments = parser.parse_args()
 
 text_model = TextGenerator()

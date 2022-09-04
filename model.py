@@ -1,43 +1,42 @@
+import random
 import re
 from random import choice
 
 
 class TextGenerator:
-    def __init__(self):
-        self.bigrams = {}
-        self.first_words = []
+    def __init__(self, n=2):
+        self.n_grams = {}
+        self.first_n_words = []
+        self.n = n
 
-    def __line_handler(self, string: str, prefix=[]) -> list[str]:
-        words = prefix + re.compile('[^а-яА-Я ]').sub(' ', string).lower().split()
-        for i in range(2, len(words)):
-            if not len(self.first_words):
-                self.first_words = [words[0], words[1]]
-            if (words[i - 2], words[i - 1]) not in self.bigrams:
-                self.bigrams[(words[i - 2], words[i - 1])] = []
-            self.bigrams[(words[i - 2], words[i - 1])].append(words[i])
-        return words[-2::]
+    def __n_grams_creator(self, words: list[str]) -> None:
+        for i in range(self.n, len(words)):
+            if tuple(words[i - j] for j in range(self.n, 0, -1)) not in self.n_grams:
+                self.n_grams[tuple(words[i - j] for j in range(self.n, 0, -1))] = []
+            self.n_grams[tuple(words[i - j] for j in range(self.n, 0, -1))].append(words[i])
 
-    def __extreme_case(self, prefix: list[str]) -> None:
-        if (prefix[0], prefix[1]) not in self.bigrams:
-            self.bigrams[(prefix[0], prefix[1])] = []
-        self.bigrams[(prefix[0], prefix[1])].append(self.first_words[0])
-        if (prefix[1], self.first_words[0]) not in self.bigrams:
-            self.bigrams[(prefix[1], self.first_words[0])] = []
-        self.bigrams[(prefix[1], self.first_words[0])].append(self.first_words[1])
+    def __line_handler(self, string: str, last_n_words=[]) -> list[str]:
+        words = last_n_words + re.compile('[^а-яА-Я ]').sub(' ', string).lower().split()
+        if not len(self.first_n_words) and len(words) > self.n:
+            self.first_n_words = [words[j] for j in range(self.n)]
+        self.__n_grams_creator(words)
+        return words[-self.n::]
 
     def fit(self, input_dir=None) -> None:
         if input_dir is not None:
             with open(input_dir, 'r', encoding='utf-8') as f:
-                prefix = []
+                last_n_words = []
                 for i in f:
-                    prefix = self.__line_handler(i, prefix)
-                self.__extreme_case(prefix)
+                    last_n_words = self.__line_handler(i, last_n_words)
+                self.__n_grams_creator(last_n_words + self.first_n_words)
 
-    def generate(self, length: int, prefix=None) -> None:
+    def generate(self, length: int, prefix=None, seed=None) -> None:
+        if seed is not None:
+            random.seed(seed)
         if prefix is None:
-            prefix = choice(list(self.bigrams.keys()))
+            prefix = choice(list(self.n_grams.keys()))
         for i in range(length):
-            word = choice(self.bigrams[prefix])
-            prefix = (prefix[1], word)
+            word = choice(self.n_grams[prefix])
+            prefix = prefix[1:] + (word,)
             print(word, end=' ')
         print()
