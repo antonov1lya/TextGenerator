@@ -11,4 +11,4 @@ arguments = parser.parse_args()
 
 with open(arguments.model, 'rb') as f:
     text_model = pickle.load(f)
-    text_model.generate(arguments.length, arguments.prefix, arguments.seed)
+    print(text_model.generate(arguments.length, arguments.prefix, arguments.seed))
