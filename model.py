@@ -39,7 +39,7 @@ class TextGenerator:
         else:
             prefix = tuple(prefix[-self.n:])
         text = list(prefix) + []
-        for i in range(length):
+        for i in range(length - self.n):
             if prefix not in self.n_grams:
                 prefix = random.choice(self.n_grams_keys)
             word = random.choice(self.n_grams[prefix])
