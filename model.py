@@ -12,9 +12,10 @@ class TextGenerator:
     def __line_tokenizer(self, string: str, last_n_words: list[str]) -> list[str]:
         words = last_n_words + re.compile('[^а-яА-Я ]').sub(' ', string).lower().split()
         for i in range(self.n, len(words)):
-            if tuple(words[i - j] for j in range(self.n, 0, -1)) not in self.n_grams:
-                self.n_grams[tuple(words[i - j] for j in range(self.n, 0, -1))] = []
-            self.n_grams[tuple(words[i - j] for j in range(self.n, 0, -1))].append(words[i])
+            prefix = tuple(words[i - j] for j in range(self.n, 0, -1))
+            if prefix not in self.n_grams:
+                self.n_grams[prefix] = []
+            self.n_grams[prefix].append(words[i])
         return words[-self.n::]
 
     def fit(self, input_dir=None) -> None:
